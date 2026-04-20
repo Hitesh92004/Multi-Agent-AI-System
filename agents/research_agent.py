@@ -7,7 +7,7 @@ information on a given topic and return a structured bullet-point summary.
 
 import os
 from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
+from langchain_groq import ChatGroq
 from langgraph.prebuilt import create_react_agent
 from tools import search_tool
 
@@ -17,13 +17,13 @@ load_dotenv()
 def create_research_agent():
     """Create and return a LangGraph ReAct agent configured for research.
 
-    The agent uses GPT-3.5-turbo with temperature=0 for factual responses
+    The agent uses Groq's Llama 3.3 70B with temperature=0 for factual responses
     and the DuckDuckGo search tool for web lookups.
 
     Returns:
         A LangGraph CompiledGraph agent ready for research tasks.
     """
-    llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")
+    llm = ChatGroq(temperature=0, model="llama-3.3-70b-versatile")
 
     agent = create_react_agent(
         model=llm,

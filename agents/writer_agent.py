@@ -2,26 +2,26 @@
 writer_agent.py — Writer Agent for the Multi-Agent AI System.
 
 Takes research data and produces polished content (blog post, report, etc.)
-using GPT-3.5-turbo with a creative temperature setting.
+using Groq's Llama 3.3 70B with a creative temperature setting.
 """
 
 import os
 from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
+from langchain_groq import ChatGroq
 from langchain_core.messages import SystemMessage, HumanMessage
 
 load_dotenv()
 
 
 def create_writer_agent():
-    """Create and return a ChatOpenAI instance configured for creative writing.
+    """Create and return a ChatGroq instance configured for creative writing.
 
-    Uses GPT-3.5-turbo with temperature=0.7 for varied, engaging output.
+    Uses Llama 3.3 70B with temperature=0.7 for varied, engaging output.
 
     Returns:
-        A ChatOpenAI LLM instance.
+        A ChatGroq LLM instance.
     """
-    llm = ChatOpenAI(temperature=0.7, model="gpt-3.5-turbo")
+    llm = ChatGroq(temperature=0.7, model="llama-3.3-70b-versatile")
     return llm
 
 

@@ -7,21 +7,21 @@ Returns a structured dict with score, approval status, and revised content.
 
 import os
 from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
+from langchain_groq import ChatGroq
 from langchain_core.messages import SystemMessage, HumanMessage
 
 load_dotenv()
 
 
 def create_reviewer_agent():
-    """Create and return a ChatOpenAI instance configured for content review.
+    """Create and return a ChatGroq instance configured for content review.
 
-    Uses GPT-3.5-turbo with temperature=0.2 for consistent, critical output.
+    Uses Llama 3.3 70B with temperature=0.2 for consistent, critical output.
 
     Returns:
-        A ChatOpenAI LLM instance.
+        A ChatGroq LLM instance.
     """
-    llm = ChatOpenAI(temperature=0.2, model="gpt-3.5-turbo")
+    llm = ChatGroq(temperature=0.2, model="llama-3.3-70b-versatile")
     return llm
 
 

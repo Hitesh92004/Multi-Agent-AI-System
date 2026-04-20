@@ -31,12 +31,12 @@ User Input (Topic + Content Type)
            │
            ▼
   ┌─────────────────┐
-  │  Writer Agent    │ ── GPT-3.5-turbo ──▶ Draft content
+  │  Writer Agent    │ ── Llama 3.3 70B (Groq) ──▶ Draft content
   └────────┬────────┘
            │
            ▼
   ┌─────────────────┐
-  │ Reviewer Agent   │ ── GPT-3.5-turbo ──▶ Score + Revised content
+  │ Reviewer Agent   │ ── Llama 3.3 70B (Groq) ──▶ Score + Revised content
   └────────┬────────┘
            │
            ▼
@@ -50,12 +50,12 @@ User Input (Topic + Content Type)
 
 | Layer       | Technology                              |
 |-------------|-----------------------------------------|
-| LLM         | OpenAI GPT-3.5-turbo                    |
-| Framework   | LangChain + langchain-openai            |
+| LLM         | Llama 3.3 70B via Groq (free tier)      |
+| Framework   | LangChain + langchain-groq + LangGraph  |
 | Web Search  | DuckDuckGo (via langchain-community)    |
 | Backend API | FastAPI + Uvicorn                       |
 | Frontend UI | Streamlit                               |
-| Deployment  | Docker (Koyeb / Hugging Face Spaces)    |
+| Deployment  | Docker (Render / Hugging Face Spaces)   |
 | Environment | python-dotenv                           |
 
 ---
@@ -81,10 +81,10 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-Open `.env` and add your real OpenAI API key:
+Open `.env` and add your free Groq API key (get one at [console.groq.com](https://console.groq.com/)):
 
 ```
-OPENAI_API_KEY=sk-your-real-key-here
+GROQ_API_KEY=gsk_your-real-key-here
 ```
 
 ### 4. Start the backend (Terminal 1)
@@ -114,20 +114,20 @@ The included `Dockerfile` builds a slim Python 3.11 image and runs the FastAPI b
 1. Create a "New Space" on Hugging Face.
 2. Select **Docker** as the SDK.
 3. Upload/Push your code.
-4. Add `OPENAI_API_KEY` in the Space's **Settings > Variables and Secrets**.
+4. Add `GROQ_API_KEY` in the Space's **Settings > Variables and Secrets**.
 
 ### Frontend — Streamlit Cloud
 
 1. Push your code to a GitHub repository.
 2. Connect the repository to [Streamlit Cloud](https://streamlit.io/cloud).
 3. Set the `API_URL` environment variable to your Hugging Face Space URL (e.g., `https://username-space-name.hf.space`).
-4. Set the `OPENAI_API_KEY` in the Streamlit Cloud secrets if required.
+4. Set the `GROQ_API_KEY` in the Streamlit Cloud secrets if required.
 
 ### Required Environment Variables
 
 | Variable        | Description                     | Required |
 |-----------------|---------------------------------|----------|
-| `OPENAI_API_KEY`| OpenAI API key                  | ✅       |
+| `GROQ_API_KEY`  | Groq API key (free)             | ✅       |
 | `API_URL`       | Backend URL (for Streamlit)     | For prod |
 | `APP_URL`       | Self-URL for keep-alive pings   | Optional |
 
@@ -167,4 +167,4 @@ MIT
 
 ---
 
-Built with ❤️ using LangChain, OpenAI, FastAPI, and Streamlit.
+Built with ❤️ using LangChain, Groq, FastAPI, and Streamlit.
