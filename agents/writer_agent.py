@@ -2,33 +2,37 @@
 writer_agent.py — Writer Agent for the Multi-Agent AI System.
 
 Takes research data and produces polished content (blog post, report, etc.)
-using Groq's Llama 3.3 70B with a creative temperature setting.
+using Google Gemini 2.5 Flash for natural writing and creative output.
 """
 
 import os
 from dotenv import load_dotenv
-from langchain_groq import ChatGroq
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import SystemMessage, HumanMessage
 
 load_dotenv()
 
 
 def create_writer_agent():
-    """Create and return a ChatGroq instance configured for creative writing.
+    """Create and return a Gemini 2.5 Flash instance configured for creative writing.
 
-    Uses Llama 3.3 70B with temperature=0.7 for varied, engaging output.
+    Uses Google Gemini 2.5 Flash with temperature=0.7 for varied,
+    natural, and engaging content output.
 
     Returns:
-        A ChatGroq LLM instance.
+        A ChatGoogleGenerativeAI LLM instance.
     """
-    llm = ChatGroq(temperature=0.7, model="llama-3.3-70b-versatile")
+    llm = ChatGoogleGenerativeAI(
+        model="gemini-2.5-flash-preview-04-17",
+        temperature=0.7,
+    )
     return llm
 
 
 def write_content(topic: str, research_data: str, content_type: str = "blog post") -> str:
     """Write content based on the provided topic and research data.
 
-    Builds a system + human message pair and invokes the writer LLM to
+    Builds a system + human message pair and invokes Gemini 2.5 Flash to
     produce structured, engaging content of the requested type.
 
     Args:
@@ -44,7 +48,7 @@ def write_content(topic: str, research_data: str, content_type: str = "blog post
 
         system_msg = SystemMessage(
             content=(
-                f"You are an expert content writer.\n"
+                f"You are an expert content writer powered by Gemini 2.5 Flash.\n"
                 f"Write engaging, clear, well-structured content.\n"
                 f"Always use proper headings and paragraphs.\n"
                 f"Content type: {content_type}"

@@ -1,43 +1,38 @@
 """
 research_agent.py — Research Agent for the Multi-Agent AI System.
 
-Uses DuckDuckGo web search via a LangGraph ReAct agent to gather
-information on a given topic and return a structured bullet-point summary.
+Uses DuckDuckGo for web search and DeepSeek R1 (via Groq) for
+chain-of-thought reasoning and deep analysis of the results.
 """
 
 import os
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
-from langgraph.prebuilt import create_react_agent
-from tools import search_tool
+from langchain_community.tools import DuckDuckGoSearchRun
+from langchain_core.messages import SystemMessage, HumanMessage
 
 load_dotenv()
 
 
 def create_research_agent():
-    """Create and return a LangGraph ReAct agent configured for research.
+    """Create and return a ChatGroq instance with DeepSeek R1.
 
-    The agent uses Groq's Llama 3.3 70B with temperature=0 for factual responses
-    and the DuckDuckGo search tool for web lookups.
+    Uses DeepSeek R1 (distilled 70B) with temperature=0 for
+    deep chain-of-thought reasoning and factual analysis.
 
     Returns:
-        A LangGraph CompiledGraph agent ready for research tasks.
+        A ChatGroq LLM instance configured with DeepSeek R1.
     """
-    llm = ChatGroq(temperature=0, model="llama-3.3-70b-versatile")
-
-    agent = create_react_agent(
-        model=llm,
-        tools=[search_tool],
-    )
-
-    return agent
+    llm = ChatGroq(temperature=0, model="deepseek-r1-distill-llama-70b")
+    return llm
 
 
 def research(topic: str) -> str:
-    """Research a topic using the research agent.
+    """Research a topic using DuckDuckGo search + DeepSeek R1 analysis.
 
-    Creates a research agent, sends it a structured prompt, and returns
-    the agent's findings as a bullet-point summary.
+    Step 1: Searches the web using DuckDuckGo for raw data.
+    Step 2: Passes raw results to DeepSeek R1 for deep reasoning
+            and structured analysis.
 
     Args:
         topic: The topic to research.
@@ -46,19 +41,38 @@ def research(topic: str) -> str:
         A structured summary of research findings, or an error message on failure.
     """
     try:
-        agent = create_research_agent()
-        prompt = (
-            f"Research the following topic thoroughly: {topic}\n"
-            f"Search for the latest information.\n"
-            f"Find 3-5 key facts or points.\n"
-            f"Return a structured bullet-point summary.\n"
-            f"Be factual and concise."
+        # Step 1: Web search with DuckDuckGo
+        print("    🌐 Searching the web...")
+        ddg = DuckDuckGoSearchRun()
+        raw_results = ddg.run(f"{topic} latest information")
+        print("    📄 Raw results collected, analyzing with DeepSeek R1...")
+
+        # Step 2: Deep analysis with DeepSeek R1
+        llm = create_research_agent()
+
+        system_msg = SystemMessage(
+            content=(
+                "You are a world-class research analyst powered by DeepSeek R1.\n"
+                "Analyze the provided search results using deep reasoning.\n"
+                "Extract the most important and factual information.\n"
+                "Always structure your output as clear bullet points.\n"
+                "Be factual, concise, and cite specific details from the data."
+            )
         )
-        result = agent.invoke({"messages": [{"role": "user", "content": prompt}]})
-        # Extract the final AI message content
-        messages = result.get("messages", [])
-        if messages:
-            return messages[-1].content
-        return "No research results found."
+
+        human_msg = HumanMessage(
+            content=(
+                f"Research topic: {topic}\n\n"
+                f"Here are the raw web search results:\n{raw_results}\n\n"
+                f"Instructions:\n"
+                f"- Identify 3-5 key facts or insights\n"
+                f"- Organize them as a structured bullet-point summary\n"
+                f"- Note any recent trends or developments\n"
+                f"- Be factual and concise"
+            )
+        )
+
+        response = llm.invoke([system_msg, human_msg])
+        return response.content
     except Exception as e:
         return f"Research Agent error: {str(e)}"

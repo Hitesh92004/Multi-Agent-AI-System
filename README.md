@@ -26,12 +26,12 @@ User Input (Topic + Content Type)
         │
         ▼
   ┌─────────────────┐
-  │ Research Agent   │ ── DuckDuckGo Search ──▶ Bullet-point summary
+  │ Research Agent   │ ── DuckDuckGo + DeepSeek R1 ──▶ Bullet-point summary
   └────────┬────────┘
            │
            ▼
   ┌─────────────────┐
-  │  Writer Agent    │ ── Llama 3.3 70B (Groq) ──▶ Draft content
+  │  Writer Agent    │ ── Gemini 2.5 Flash ──▶ Draft content
   └────────┬────────┘
            │
            ▼
@@ -50,8 +50,8 @@ User Input (Topic + Content Type)
 
 | Layer       | Technology                              |
 |-------------|-----------------------------------------|
-| LLM         | Llama 3.3 70B via Groq (free tier)      |
-| Framework   | LangChain + langchain-groq + LangGraph  |
+| LLM         | DeepSeek R1 + Gemini 2.5 Flash + Llama 3.3 70B |
+| Framework   | LangChain + langchain-groq + langchain-google-genai |
 | Web Search  | DuckDuckGo (via langchain-community)    |
 | Backend API | FastAPI + Uvicorn                       |
 | Frontend UI | Streamlit                               |
@@ -128,6 +128,7 @@ The included `Dockerfile` builds a slim Python 3.11 image and runs the FastAPI b
 | Variable        | Description                     | Required |
 |-----------------|---------------------------------|----------|
 | `GROQ_API_KEY`  | Groq API key (free)             | ✅       |
+| `GOOGLE_API_KEY`| Google AI API key (free tier)    | ✅       |
 | `API_URL`       | Backend URL (for Streamlit)     | For prod |
 | `APP_URL`       | Self-URL for keep-alive pings   | Optional |
 
